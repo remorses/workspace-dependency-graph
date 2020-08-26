@@ -1,5 +1,9 @@
 import assert from 'assert'
-import { getWorkspaceDependencies, makeDiagram } from '../src/support'
+import {
+    getWorkspaceDependencies,
+    makeDiagram,
+    writeImage,
+} from '../src/support'
 import { readFileSync } from 'fs'
 import path, { dirname } from 'path'
 
@@ -21,4 +25,12 @@ it('makeDiagram', async () => {
     })
     const graph = await makeDiagram({ depsMap, cwd })
     console.log(graph.to_dot())
+})
+it('writeImage', async () => {
+    const depsMap = await getWorkspaceDependencies({
+        packageJSON,
+        cwd,
+    })
+    const graph = await makeDiagram({ depsMap, cwd })
+    await writeImage(graph, 'test.png')
 })

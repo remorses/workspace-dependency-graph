@@ -18,7 +18,7 @@ export async function makeDiagram({
     depsMap: Map<string, string>
     cwd: string
 }) {
-    var g = graphviz.digraph('Dependency Graph')
+    var g = graphviz.digraph('G')
 
     // Add node (ID: Hello)
     depsMap.forEach((_, name) => {
@@ -35,7 +35,8 @@ export async function makeDiagram({
             )
             const deps = getPackageDependencies({ packageJSON, depsMap })
             deps.forEach((depName) => {
-                g.addEdge(name, depName)
+                const edge = g.addEdge(name, depName)
+                edge.set('color', 'red')
             })
         }),
     )
@@ -46,6 +47,19 @@ export async function makeDiagram({
     // Add node (ID: World)
     // g.addNode('World')
     return g
+}
+
+export function writeImage(graph: graphviz.Graph, filePath) {
+    // graph.setGraphVizPath('/usr/local/bin')
+    return new Promise((resolve, reject) =>
+        graph.render(
+            'png',
+            (data) => {
+                fs.promises.writeFile(filePath, data).then(resolve)
+            },
+            reject,
+        ),
+    )
 }
 
 function getPackageDependencies({

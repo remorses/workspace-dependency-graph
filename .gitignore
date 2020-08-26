@@ -10,6 +10,7 @@ dist/*
 esm
 
 # Runtime data
+test.png
 pids
 *.pid
 *.seed
