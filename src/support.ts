@@ -80,12 +80,17 @@ export function writeImage(graph: graphviz.Graph, filePath, imageType = '') {
     // graph.setGraphVizPath('/usr/local/bin')
     imageType = imageType || path.extname(filePath).replace('.', '')
     return new Promise((resolve, reject) =>
-        graph.render(
+        graph.output(
             { type: imageType, G: { rankdir: 'LR' } },
             (data) => {
                 fs.promises.writeFile(filePath, data).then(resolve)
             },
-            reject,
+            (err: any) => {
+                if (err?.code == 'EPIPE') {
+                    return
+                }
+                reject(err)
+            },
         ),
     )
 }
