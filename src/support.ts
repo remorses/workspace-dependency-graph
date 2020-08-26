@@ -35,7 +35,7 @@ export async function makeDiagram({
             )
             const deps = getPackageDependencies({ packageJSON, depsMap })
             deps.forEach((depName) => {
-                const edge = g.addEdge(name, depName)
+                const edge = g.addEdge(depName, name)
                 edge.set('color', 'red')
             })
         }),
