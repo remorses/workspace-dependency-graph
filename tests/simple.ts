@@ -1,15 +1,24 @@
 import assert from 'assert'
-import { getDependencies } from '../src/support'
+import { getWorkspaceDependencies, makeDiagram } from '../src/support'
 import { readFileSync } from 'fs'
 import path, { dirname } from 'path'
 
-it('getDependencies', async () => {
-    const packageJsonPath = 'tests/example-workspace/package.json'
-    const packageJSON = JSON.parse(readFileSync(packageJsonPath).toString())
+const packageJsonPath = 'tests/example-workspace/package.json'
+const cwd = path.resolve(dirname(packageJsonPath))
+const packageJSON = JSON.parse(readFileSync(packageJsonPath).toString())
 
-    const deps = await getDependencies({
+it('getDependencies', async () => {
+    const deps = await getWorkspaceDependencies({
         packageJSON,
-        cwd: path.resolve(dirname(packageJsonPath)),
+        cwd,
     })
     console.log(deps)
+})
+it('makeDiagram', async () => {
+    const depsMap = await getWorkspaceDependencies({
+        packageJSON,
+        cwd,
+    })
+    const graph = await makeDiagram({ depsMap, cwd })
+    console.log(graph.to_dot())
 })

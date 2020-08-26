@@ -2,7 +2,7 @@
 
 import yargs from 'yargs'
 import path from 'path'
-import { getDependencies } from './support'
+import { getWorkspaceDependencies } from './support'
 import { readFileSync } from 'fs'
 
 const argv = yargs
@@ -13,7 +13,7 @@ const argv = yargs
 async function main() {
     const cwd = argv.cwd || process.cwd()
     const packageJSON = readFileSync(path.join(cwd, 'package.json'))
-    const deps = await getDependencies({ packageJSON, cwd })
+    const deps = await getWorkspaceDependencies({ packageJSON, cwd })
     console.log(deps)
 }
 
