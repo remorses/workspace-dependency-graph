@@ -79,20 +79,22 @@ export async function makeDiagram({
 export function writeImage(graph: graphviz.Graph, filePath, imageType = '') {
     // graph.setGraphVizPath('/usr/local/bin')
     imageType = imageType || path.extname(filePath).replace('.', '')
-    return new Promise((resolve, reject) =>
-        graph.output(
-            { type: imageType, G: { rankdir: 'LR' } },
-            (data) => {
-                fs.promises.writeFile(filePath, data).then(resolve)
-            },
-            (err: any) => {
-                if (err?.code == 'EPIPE') {
-                    return
-                }
-                reject(err)
-            },
-        ),
-    )
+    return new Promise((resolve, reject) => {
+        try {
+            graph.output(
+                { type: imageType, G: { rankdir: 'LR' } },
+                (data) => {
+                    fs.promises.writeFile(filePath, data).then(resolve)
+                },
+                reject,
+            )
+        } catch (err) {
+            if (err?.code == 'EPIPE') {
+                resolve()
+            }
+            reject(err)
+        }
+    })
 }
 
 function getPackageDependencies({
