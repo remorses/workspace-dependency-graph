@@ -19,7 +19,8 @@
     "scripts": {
         "test": "NODE_ENV=test mocha --colors --exit",
         "compile": "sucrase -q ./src -d ./dist --transforms typescript,imports",
-        "dev": "yarn compile && node dist"
+        "dev": "yarn compile && node dist",
+        "cli": "yarn compile && node dist"
     },
     "keywords": [],
     "author": "Tommaso De Rossi, morse <beats.by.morse@gmail.com>",
@@ -34,6 +35,9 @@
         "typescript": "^3.9.5"
     },
     "dependencies": {
-        "tslib": "^2.0.0"
+        "@npmcli/map-workspaces": "^0.0.0-pre.1",
+        "@types/yargs": "^15.0.5",
+        "tslib": "^2.0.0",
+        "yargs": "^15.4.1"
     }
 }
