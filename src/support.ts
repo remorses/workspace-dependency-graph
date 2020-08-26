@@ -15,10 +15,14 @@ export async function makeDiagram({
     depsMap,
     cwd,
     focus,
+    includeDev,
+    includePeer,
 }: {
     depsMap: Map<string, string>
     cwd: string
     focus?: string
+    includeDev?: boolean
+    includePeer?: boolean
 }) {
     var g = graphviz.digraph('G')
 
@@ -36,7 +40,12 @@ export async function makeDiagram({
                     .readFile(path.resolve(cwd, packagePath, 'package.json'))
                     .then((x) => x.toString()),
             )
-            const deps = getPackageDependencies({ packageJSON, depsMap })
+            const deps = getPackageDependencies({
+                packageJSON,
+                depsMap,
+                includeDev,
+                includePeer,
+            })
             deps.forEach((depName) => {
                 if (focus && ![depName, name].includes(focus)) {
                     return
@@ -83,16 +92,17 @@ export function writeImage(graph: graphviz.Graph, filePath, imageType = '') {
 
 function getPackageDependencies({
     packageJSON,
+    includeDev,
+    includePeer,
     depsMap,
-}: {
-    depsMap: Map<string, string>
-    packageJSON
 }) {
-    const names = [
-        ...Object.keys(packageJSON.dependencies || {}),
-        ...Object.keys(packageJSON.devDependencies || {}),
-        ...Object.keys(packageJSON.peerDependencies || {}),
-    ]
+    let names = Object.keys(packageJSON.dependencies || {})
+    if (includeDev) {
+        names = names.concat(Object.keys(packageJSON.devDependencies || {}))
+    }
+    if (includePeer) {
+        names = names.concat(Object.keys(packageJSON.peerDependencies || {}))
+    }
     return names.filter((x) => depsMap.has(x))
 }
 

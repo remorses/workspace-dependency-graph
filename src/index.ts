@@ -7,6 +7,8 @@ import { readFileSync, existsSync } from 'fs'
 
 const argv = yargs
     .option('cwd', { type: 'string' })
+    .option('dev', { type: 'boolean' })
+    .option('peer', { type: 'boolean' })
     .option('focus', { type: 'string' })
     .option('verbose', { alias: 'v', type: 'boolean' })
     .option('image', { type: 'string' })
@@ -26,6 +28,8 @@ async function main() {
         cwd,
         depsMap,
         focus: argv.focus,
+        includeDev: argv.dev,
+        includePeer: argv.peer,
     })
 
     console.log(graph.to_dot())
