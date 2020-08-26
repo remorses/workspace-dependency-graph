@@ -1,5 +1,5 @@
 import mapWorkspaces from '@npmcli/map-workspaces'
-import graphviz from 'graphviz'
+import graphviz, { Graph } from 'graphviz'
 import fs from 'fs'
 import path from 'path'
 
@@ -14,9 +14,11 @@ export async function getWorkspaceDependencies({ cwd, packageJSON }) {
 export async function makeDiagram({
     depsMap,
     cwd,
+    focus,
 }: {
     depsMap: Map<string, string>
     cwd: string
+    focus?: string
 }) {
     var g = graphviz.digraph('G')
 
@@ -24,6 +26,7 @@ export async function makeDiagram({
     depsMap.forEach((_, name) => {
         const newNode = g.addNode(name)
     })
+    const nodesUsed = focus ? [focus] : []
     await Promise.all(
         Array.from(depsMap.keys()).map(async (name) => {
             const packagePath = depsMap.get(name)
@@ -35,11 +38,23 @@ export async function makeDiagram({
             )
             const deps = getPackageDependencies({ packageJSON, depsMap })
             deps.forEach((depName) => {
+                if (focus && ![depName, name].includes(focus)) {
+                    return
+                }
+                if (focus) {
+                    nodesUsed.push(focus === depName ? name : depName)
+                }
                 const edge = g.addEdge(depName, name)
                 edge.set('color', 'red')
             })
         }),
     )
+    let nodesNotUsed = Array.from(depsMap.keys()).filter(
+        (x) => !nodesUsed.includes(x),
+    )
+    nodesNotUsed.forEach((name) => {
+        removeNode(g, name, true)
+    })
     // var n1 = g.addNode('Hello')
     // n1.set('style', 'filled')
     // console.log(g.to_dot())
@@ -76,4 +91,23 @@ function getPackageDependencies({
         ...Object.keys(packageJSON.peerDependencies || {}),
     ]
     return names.filter((x) => depsMap.has(x))
+}
+
+export function removeNode(_graph: any, id: string, force?: boolean) {
+    const graph = _graph as any
+
+    if (force === true) {
+        for (let i = 0; i < graph.edges.length; ++i) {
+            if (!graph.edges[i]) {
+                continue
+            }
+            if (
+                graph.edges[i].nodeOne.id == id ||
+                graph.edges[i].nodeTwo.id == id
+            ) {
+                delete graph.edges[i]
+            }
+        }
+    }
+    graph.nodes.removeItem(id)
 }

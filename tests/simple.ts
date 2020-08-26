@@ -26,11 +26,21 @@ it('makeDiagram', async () => {
     const graph = await makeDiagram({ depsMap, cwd })
     console.log(graph.to_dot())
 })
-it('writeImage', async () => {
-    const depsMap = await getWorkspaceDependencies({
-        packageJSON,
-        cwd,
+describe('writeImage', () => {
+    it('simple', async () => {
+        const depsMap = await getWorkspaceDependencies({
+            packageJSON,
+            cwd,
+        })
+        const graph = await makeDiagram({ depsMap, cwd })
+        await writeImage(graph, 'simple.png')
     })
-    const graph = await makeDiagram({ depsMap, cwd })
-    await writeImage(graph, 'test.png')
+    it('focus', async () => {
+        const depsMap = await getWorkspaceDependencies({
+            packageJSON,
+            cwd,
+        })
+        const graph = await makeDiagram({ depsMap, cwd, focus: 'c' })
+        await writeImage(graph, 'focus.png')
+    })
 })

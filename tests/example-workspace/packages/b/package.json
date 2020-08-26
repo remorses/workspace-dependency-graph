@@ -1,3 +1,6 @@
 {
-    "name": "b"
+    "name": "b",
+    "dependencies": {
+        "d": "*"
+    }
 }

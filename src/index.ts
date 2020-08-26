@@ -7,6 +7,7 @@ import { readFileSync, existsSync } from 'fs'
 
 const argv = yargs
     .option('cwd', { type: 'string' })
+    .option('focus', { type: 'string' })
     .option('verbose', { alias: 'v', type: 'boolean' })
     .option('image', { type: 'string' })
     .help('help').argv
@@ -24,7 +25,9 @@ async function main() {
     const graph = await makeDiagram({
         cwd,
         depsMap,
+        focus: argv.focus,
     })
+
     console.log(graph.to_dot())
     if (argv.image) {
         await writeImage(graph, argv.image)
