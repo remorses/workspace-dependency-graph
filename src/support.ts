@@ -49,11 +49,12 @@ export async function makeDiagram({
     return g
 }
 
-export function writeImage(graph: graphviz.Graph, filePath) {
+export function writeImage(graph: graphviz.Graph, filePath, imageType = '') {
     // graph.setGraphVizPath('/usr/local/bin')
+    imageType = imageType || path.extname(filePath).replace('.', '')
     return new Promise((resolve, reject) =>
         graph.render(
-            'png',
+            { type: imageType, G: { rankdir: 'LR' } },
             (data) => {
                 fs.promises.writeFile(filePath, data).then(resolve)
             },

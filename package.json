@@ -5,7 +5,10 @@
     "description": "",
     "main": "dist/index.js",
     "module": "esm/index.js",
-    "bin": "dist/index.js",
+    "bin": {
+        "workspace-dependency-graph": "dist/index.js",
+        "wsg": "dist/index.js"
+    },
     "types": "dist/index.d.ts",
     "mocha": {
         "require": "tests/init.js",
