@@ -49,6 +49,9 @@ export async function makeDiagram({
             })
         }),
     )
+    if (!focus) {
+        return g
+    }
     let nodesNotUsed = Array.from(depsMap.keys()).filter(
         (x) => !nodesUsed.includes(x),
     )
